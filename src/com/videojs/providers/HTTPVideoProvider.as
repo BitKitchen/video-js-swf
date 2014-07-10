@@ -315,6 +315,12 @@ package com.videojs.providers{
         }
         
         public function seekBySeconds(pTime:Number):void{
+            if( _metadata == null || _metadata.isReady !== true ) {
+                // If seek is called before onMetaData is fired, onMetaData
+                // will not be triggered and the video will be sized incorrectly
+                return;
+            }
+            
             if(_isPlaying)
             {
                 _isSeeking = true;
@@ -343,6 +349,12 @@ package com.videojs.providers{
         }
         
         public function seekByPercent(pPercent:Number):void{
+            if( _metadata == null || _metadata.isReady !== true ) {
+                // If seek is called before onMetaData is fired, onMetaData
+                // will not be triggered and the video will be sized incorrectly
+                return;
+            }
+            
             if(_isPlaying && _metadata.duration != undefined){
                 _isSeeking = true;
                 if(pPercent < 0){
@@ -615,6 +627,7 @@ package com.videojs.providers{
         public function onMetaData(pMetaData:Object):void{
 
             _metadata = pMetaData;
+            _metadata.isReady = true;
             if(pMetaData.duration != undefined){
                 _isLive = false;
                 _canSeekAhead = true;
